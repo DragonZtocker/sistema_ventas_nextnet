@@ -1,0 +1,64 @@
+
+from flask import Blueprint, render_template, request, send_file, flash
+from sqlalchemy import func, extract
+from models import db, Venta
+import io
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.pdfgen import canvas
+
+bp = Blueprint("reportes", __name__, url_prefix="/reportes")
+
+def parse_date(s):
+    from datetime import datetime
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except:
+        return None
+
+@bp.route("/", methods=["GET"])
+def dashboard():
+    f_inicio = parse_date(request.args.get("inicio",""))
+    f_fin = parse_date(request.args.get("fin",""))
+    consultor = request.args.get("consultor","").strip()
+    anio = request.args.get("anio","").strip()
+
+    q = db.session.query(Venta)
+    if f_inicio: q = q.filter(Venta.fecha >= f_inicio)
+    if f_fin: q = q.filter(Venta.fecha <= f_fin)
+    if consultor: q = q.filter(Venta.nombre_consultor.ilike(f"%{consultor}%"))
+    if anio: q = q.filter(extract("year", Venta.fecha)==int(anio))
+
+    ventas = q.order_by(Venta.fecha.desc()).all()
+
+    def agg_sum(column):
+        return db.session.query(func.coalesce(func.sum(column), 0)).scalar() or 0
+
+    base_q = db.session.query(Venta)
+    if f_inicio: base_q = base_q.filter(Venta.fecha >= f_inicio)
+    if f_fin: base_q = base_q.filter(Venta.fecha <= f_fin)
+    if anio: base_q = base_q.filter(extract("year", Venta.fecha)==int(anio))
+
+    totals = {
+        "mrc_nuevo": agg_sum(Venta.mrc_nuevo),
+        "fcv_nuevo": agg_sum(Venta.fcv_nuevo),
+        "pago_unico": agg_sum(Venta.pago_unico),
+        "fcv_renovado": agg_sum(Venta.fcv_renovado),
+        "mrc_final": agg_sum(Venta.mrc_final),
+        "variacion": agg_sum(Venta.variacion),
+    }
+
+    # Ranking por consultor: Σ MRC Nuevo y Σ FCV Nuevo
+    ranking = (
+        db.session.query(
+            Venta.nombre_consultor,
+            func.count(Venta.id).label("num"),
+            func.coalesce(func.sum(Venta.mrc_nuevo), 0).label("mrc_nuevo_sum"),
+            func.coalesce(func.sum(Venta.fcv_nuevo), 0).label("fcv_nuevo_sum"),
+        )
+    )
+    if f_inicio: ranking = ranking.filter(Venta.fecha >= f_inicio)
+    if f_fin: ranking = ranking.filter(Venta.fecha <= f_fin)
+    if anio: ranking = ranking.filter(extract("year", Venta.fecha)==int(anio))
+    ranking = ranking.group_by(Venta.nombre_consultor).order_by(func.coalesce(func.sum(Venta.mrc_nuevo),0).desc()).all()
+
+    return render_template("reportes.html", ventas=ventas, totals=totals, ranking=ranking)

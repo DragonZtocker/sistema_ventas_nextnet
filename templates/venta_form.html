@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>{{ modo }} Venta</h3>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="row">
+    <div class="col-md-3 mb-3">{{ form.fecha.label }} {{ form.fecha(class="form-control") }}</div>
+    <div class="col-md-3 mb-3">{{ form.periodo.label }} {{ form.periodo(class="form-select") }}</div>
+    <div class="col-md-3 mb-3">{{ form.sector.label }} {{ form.sector(class="form-select") }}</div>
+    <div class="col-md-3 mb-3">{{ form.tipo_servicio.label }} {{ form.tipo_servicio(class="form-select") }}</div>
+    <div class="col-md-3 mb-3">{{ form.nombre_consultor.label }} {{ form.nombre_consultor(class="form-control") }}</div>
+    <div class="col-md-3 mb-3">{{ form.nombre_cliente.label }} {{ form.nombre_cliente(class="form-control") }}</div>
+    <div class="col-md-3 mb-3">{{ form.origen_venta.label }} {{ form.origen_venta(class="form-select") }}</div>
+    <div class="col-md-3 mb-3">{{ form.n_cotizacion_odoo.label }} {{ form.n_cotizacion_odoo(class="form-control") }}</div>
+    <div class="col-md-3 mb-3">{{ form.n_licitacion.label }} {{ form.n_licitacion(class="form-control") }}</div>
+    <div class="col-md-3 mb-3">{{ form.plazo_contrato.label }} {{ form.plazo_contrato(class="form-control", min=1, max=100) }}</div>
+    <div class="col-md-3 mb-3">{{ form.tipo_venta.label }} {{ form.tipo_venta(class="form-select") }}</div>
+    <div class="col-md-3 mb-3">{{ form.fcv_nuevo.label }} {{ form.fcv_nuevo(class="form-control", step="0.01") }}</div>
+    <div class="col-md-3 mb-3">{{ form.mrc_nuevo.label }} {{ form.mrc_nuevo(class="form-control", readonly=True) }}</div>
+    <div class="col-md-3 mb-3">{{ form.fcv_renovado.label }} {{ form.fcv_renovado(class="form-control", step="0.01") }}</div>
+    <div class="col-md-3 mb-3">{{ form.mrc_inicial.label }} {{ form.mrc_inicial(class="form-control", step="0.01") }}</div>
+    <div class="col-md-3 mb-3">{{ form.mrc_final.label }} {{ form.mrc_final(class="form-control", readonly=True) }}</div>
+    <div class="col-md-3 mb-3">{{ form.variacion.label }} {{ form.variacion(class="form-control", readonly=True) }}</div>
+    <div class="col-md-3 mb-3">{{ form.pago_unico.label }} {{ form.pago_unico(class="form-control", step="0.01") }}</div>
+  </div>
+  <button class="btn btn-primary">{{ form.submit.label.text }}</button>
+  <a class="btn btn-secondary" href="{{ url_for('ventas.listar_ventas') }}">Volver</a>
+</form>
+
+<script>
+function round2(n){ return Math.round(n*100)/100 }
+function recalc(){
+  const plazo = parseFloat(document.querySelector('[name="plazo_contrato"]').value || "0");
+  const fcv_nuevo = parseFloat(document.querySelector('[name="fcv_nuevo"]').value || "0");
+  const fcv_renovado = parseFloat(document.querySelector('[name="fcv_renovado"]').value || "0");
+  const mrc_inicial = parseFloat(document.querySelector('[name="mrc_inicial"]').value || "0");
+  const mrc_nuevo = plazo>0 ? round2(fcv_nuevo/plazo) : 0;
+  const mrc_final = plazo>0 ? round2(fcv_renovado/plazo) : 0;
+  const variacion = round2(mrc_final - mrc_inicial);
+  if(!isNaN(mrc_nuevo)) document.querySelector('[name="mrc_nuevo"]').value = mrc_nuevo.toFixed(2);
+  if(!isNaN(mrc_final)) document.querySelector('[name="mrc_final"]').value = mrc_final.toFixed(2);
+  if(!isNaN(variacion)) document.querySelector('[name="variacion"]').value = variacion.toFixed(2);
+}
+document.addEventListener("input", function(e){
+  if (["fcv_nuevo","fcv_renovado","plazo_contrato","mrc_inicial"].includes(e.target.name)){
+    recalc();
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+
+# Python/Flask
+__pycache__/
+*.py[cod]
+*.log
+
+# Entornos y secretos
+.venv/
+.env
+*.env
+
+# DB/archivos locales
+instance/
+exports/
+*.db
+*.sqlite3
+
+# SO/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

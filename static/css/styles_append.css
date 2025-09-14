@@ -1,0 +1,50 @@
+
+/* --- Dark theme fixes for Reportes --- */
+
+/* Card headers and bodies readable */
+.card-header {
+  background-color: #0f1824 !important;
+  color: #e5e5e5 !important;
+  border-bottom: 1px solid #2b3645 !important;
+}
+.card, .card .card-body, .card .card-body * {
+  color: #e5e5e5 !important;
+}
+
+/* Tables: remove white sheen and ensure consistent dark backgrounds */
+.table {
+  --bs-table-color: #e5e5e5;
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: #1a222d;
+  --bs-table-striped-color: #e5e5e5;
+  --bs-table-hover-bg: #243041;
+  --bs-table-hover-color: #e5e5e5;
+  color: #e5e5e5;
+}
+.table thead th {
+  background-color: #0f1824 !important;
+  color: #e5e5e5 !important;
+}
+.table tbody td, .table tbody th {
+  background-color: transparent !important;
+  color: #e5e5e5 !important;
+}
+.table-striped>tbody>tr:nth-of-type(odd)>* { background-color: #1a222d !important; }
+.table-hover tbody tr:hover>* { background-color: #243041 !important; }
+
+/* Badge/strong readability */
+strong { color: #ffffff !important; }
+
+/* Inputs inside dark cards */
+.form-control, .form-select {
+  background-color: #11161f !important;
+  color: #e5e5e5 !important;
+  border-color: #2b3645 !important;
+}
+.form-control::placeholder { color: rgba(229,229,229,.6) !important; }
+
+/* Fix for autofill */
+input:-webkit-autofill, select:-webkit-autofill {
+  -webkit-text-fill-color: #e5e5e5 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #11161f inset !important;
+}

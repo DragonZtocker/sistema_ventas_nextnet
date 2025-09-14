@@ -1,0 +1,4 @@
+
+/* Compact table mode: hide less-critical columns */
+.table.compact-mode th.compact-hide,
+.table.compact-mode td.compact-hide { display: none; }

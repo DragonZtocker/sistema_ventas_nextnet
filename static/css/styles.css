@@ -1,0 +1,55 @@
+
+:root { color-scheme: dark; }
+
+/* Base */
+body { background-color: #0b0c10; color: #e5e5e5; }
+.card, .table, .navbar, .form-control, .form-select, .btn, .alert { border-radius: 12px; }
+.navbar { background: #0b0c10 !important; }
+
+/* Cards */
+.card { background: #1f2833; border-color: #2b3645; }
+.card-header { background-color: #0f1824; color: #e5e5e5; border-bottom: 1px solid #2b3645; }
+
+/* Tables */
+.table { color: #e5e5e5; --bs-table-color: #e5e5e5; }
+.table td, .table th { color: #e5e5e5 !important; }
+.table thead { color: #fff; }
+.table-striped>tbody>tr:nth-of-type(odd)>* { background-color: #1a222d; }
+.table-hover tbody tr:hover>* { background-color: #243041; }
+.table-dark { --bs-table-bg: #0f1824; --bs-table-color: #e5e5e5; }
+.table-light { --bs-table-bg: #1a222d; --bs-table-color: #e5e5e5; }
+.table thead.table-light th { background-color: #1a222d !important; color: #e5e5e5 !important; }
+
+/* Forms */
+.form-label { color: #c5c6c7; }
+.form-control, .form-select {
+  background-color: #11161f;
+  color: #e5e5e5;
+  border-color: #2b3645;
+}
+.form-control:focus, .form-select:focus {
+  background-color: #11161f;
+  color: #e5e5e5;
+  border-color: #66fcf1;
+  box-shadow: 0 0 0 .2rem rgba(102,252,241,.15);
+}
+.form-control::placeholder { color: rgba(229,229,229,.6); }
+.form-select option { background-color: #11161f; color: #e5e5e5; }
+
+/* Fix autofill (Edge/Chrome) */
+input:-webkit-autofill, select:-webkit-autofill {
+  -webkit-text-fill-color: #e5e5e5 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #11161f inset !important;
+}
+
+/* Alerts */
+.alert { color: #e5e5e5; }
+.alert-success { background-color: #153d3b; border-color: #1d4f4c; }
+.alert-danger { background-color: #3b1515; border-color: #4f1d1d; }
+.alert-warning { background-color: #3b3515; border-color: #4f451d; }
+.alert-info { background-color: #152e3b; border-color: #1d3e4f; }
+
+/* Buttons / links */
+.btn-primary { background-color: #45a29e; border-color: #45a29e; }
+.btn-success { background-color: #66fcf1; color: #0b0c10; border-color: #66fcf1; }
+a, .btn-link { color: #66fcf1; }

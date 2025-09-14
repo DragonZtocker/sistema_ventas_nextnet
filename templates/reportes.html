@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Reportes</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto"><label class="form-label">Inicio</label><input type="date" name="inicio" class="form-control" value="{{ request.args.get('inicio','') }}"></div>
+  <div class="col-auto"><label class="form-label">Fin</label><input type="date" name="fin" class="form-control" value="{{ request.args.get('fin','') }}"></div>
+  <div class="col-auto"><label class="form-label">Consultor</label><input type="text" name="consultor" class="form-control" value="{{ request.args.get('consultor','') }}"></div>
+  <div class="col-auto"><label class="form-label">Año</label><input type="number" name="anio" class="form-control" value="{{ request.args.get('anio','') }}"></div>
+  <div class="col-auto align-self-end"><button class="btn btn-primary">Filtrar</button></div>
+  <div class="col-auto align-self-end">
+    <a class="btn btn-outline-success" href="{{ url_for('reportes.export_excel', **request.args) }}">Exportar Excel</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('reportes.export_pdf', **request.args) }}">Exportar PDF</a>
+  </div>
+</form>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Totales (según filtros)</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">Total MRC Nuevo: <strong>{{ totals.mrc_nuevo|money }}</strong></div>
+          <div class="col-6">Total FCV Nuevo: <strong>{{ totals.fcv_nuevo|money }}</strong></div>
+          <div class="col-6">Total Pago Único: <strong>{{ totals.pago_unico|money }}</strong></div>
+          <div class="col-6">Total FCV Renovado: <strong>{{ totals.fcv_renovado|money }}</strong></div>
+          <div class="col-6">Total MRC Final: <strong>{{ totals.mrc_final|money }}</strong></div>
+          <div class="col-6">Total Variación: <strong>{{ totals.variacion|money }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Ranking de consultores</div>
+      <div class="card-body p-0">
+        <table class="table mb-0 table-striped table-hover">
+          <thead class="table-dark"><tr><th>Consultor</th><th># Ventas</th><th>Σ MRC Nuevo</th><th>Σ FCV Nuevo</th></tr></thead>
+          <tbody>
+            {% for r in ranking %}
+              <tr>
+                <td>{{ r[0] }}</td>
+                <td>{{ r[1] }}</td>
+                <td>{{ r[2]|money }}</td>
+                <td>{{ r[3]|money }}</td>
+              </tr>
+            {% else %}
+              <tr><td colspan="4" class="text-center text-muted py-3">Sin datos</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Registros</div>
+  <div class="card-body table-responsive">
+    <table class="table table-hover table-striped table-sm">
+      <thead class="table-dark">
+        <tr>
+          <th>Fecha</th><th>Consultor</th><th>Cliente</th><th>Tipo Venta</th><th>Plazo</th>
+          <th>MRC Inicial</th><th>MRC Final</th><th>Variación</th><th>FCV Nuevo</th><th>FCV Renovado</th><th>Pago Único</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in ventas %}
+        <tr>
+          <td>{{ v.fecha }}</td>
+          <td>{{ v.nombre_consultor }}</td>
+          <td>{{ v.nombre_cliente }}</td>
+          <td>{{ v.tipo_venta }}</td>
+          <td>{{ v.plazo_contrato }}</td>
+          <td>{{ v.mrc_inicial|money }}</td>
+          <td>{{ v.mrc_final|money }}</td>
+          <td>{{ v.variacion|money }}</td>
+          <td>{{ v.fcv_nuevo|money }}</td>
+          <td>{{ v.fcv_renovado|money }}</td>
+          <td>{{ v.pago_unico|money }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
